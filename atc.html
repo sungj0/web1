@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="processing.js"></script>
+    </head>
+</html>
+<body>
+    <script type="application/processing">
+        import ddf.minim.*;
+        Minim minim;
+        AudioPlayer wor;
+
+        float th;
+        int l,r;
+
+        void setup(){
+        size(800,800);
+        
+        minim=new Minim(this);  
+        wor=minim.loadFile("tv.mp3");
+        wor.loop();
+        wor.setGain(-20);
+        }
+
+        int eye=5; //look at last part
+        int closing=-1;
+        int act=0;
+        int act_term=round(random(100,1000));
+        int act_num=0;
+
+        void draw(){
+        if (act_num==act_term){
+            act_num=0;
+            act_term=round(random(100,1000));
+            act=1;
+        }
+        
+        l=0;r=255;
+        
+        noStroke();
+        fill(r);
+        rect(0,0,400,800);
+        fill(l);
+        rect(400,0,400,800);
+        
+        push();
+        float cs=abs((mouseX-width/2)/5);
+        th=acos(cs/100);
+        
+        float radl_s,radl_e,radr_s,radr_e;
+        if (mouseX<width/2){
+            radl_s=th;
+            radl_e=2*PI-th;
+            radr_s=-th;
+            radr_e=th;
+        }
+        else{
+            radl_s=PI-th;
+            radl_e=PI+th;
+            radr_s=-PI+th;
+            radr_e=PI-th;
+        }
+        
+        translate(width/2,height/2);
+        fill(l);
+        noStroke();
+        arc((mouseX-width/2)/5,(mouseY-height/2)/5,200,200,radl_s,radl_e,CHORD);
+        //circle((mouseX-width/2)/-5,(mouseY-height/2)/-5,200);
+        fill(r);
+        noStroke();
+        //circle((mouseX-width/2)/-5,(mouseY-height/2)/-5,70);
+        arc((mouseX-width/2)/5,(mouseY-height/2)/5,200,200,radr_s,radr_e,CHORD);
+        strokeWeight(5);
+        stroke(random(0,255));
+        noFill();
+        for(int i=0;i<80;i++){
+            //stroke(random(0,255));
+            circle((mouseX-width/2)/5,(mouseY-height/2)/5,i);
+        }
+        pop();
+        
+        ////cover part-if////////////////////////////////////////////////////
+        if (act==1){
+            //left,black
+            fill(l);
+            beginShape();
+            noStroke();
+            vertex(0,0);
+            bezierVertex(0,0,0,0,0,800);
+            bezierVertex(0,800,0,800,400,800);
+            bezierVertex(400,800,400,800,400,500-eye);
+            
+            bezierVertex(400,500-eye,300,500-eye,200,400); //200,400 is center
+            bezierVertex(300,300+eye,400,300+eye,400,300+eye);
+            
+            bezierVertex(400,300+eye,400,250,400,0);
+            bezierVertex(400,0,400,0,0,0);
+            endShape();
+            
+            noFill();
+            stroke(255);
+            for (int i=0;i<420;i+=20){
+            strokeWeight(4);
+            bezier(400,500+i-eye,300,500+i-eye,200,400+i,200,400+i);   
+            bezier(200,400-i,300,300-i+eye,400,300-i+eye,400,300-i+eye);
+            }
+            
+            //right,white
+            fill(r);
+            push();
+            translate(800,0);
+            scale(-1,1);
+            beginShape();
+            noStroke();
+            vertex(0,0);
+            bezierVertex(0,0,0,0,0,800);
+            bezierVertex(0,800,0,800,400,800);
+            bezierVertex(400,800,400,800,400,500-eye);
+            
+            bezierVertex(400,500-eye,300,500-eye,200,400); //200,400 is center
+            bezierVertex(300,300+eye,400,300+eye,400,300+eye);
+            
+            bezierVertex(400,300+eye,400,250,400,0);
+            bezierVertex(400,0,400,0,0,0);
+            endShape();
+            
+            noFill();
+            stroke(0);
+            strokeWeight(4);
+            for (int i=0;i<420;i+=20){
+            strokeWeight(4);
+            bezier(400,500+i-eye,300,500+i-eye,200,400+i,200,400+i);   
+            bezier(200,400-i,300,300-i+eye,400,300-i+eye,400,300-i+eye);
+            }
+            pop();
+            //eye closing, closing=-1: non_act, closing=1: closing, closing=0: opening
+            if (eye==0){
+            act=0;
+            eye=5;
+            closing=-1;
+            }      
+            if (eye==5 & closing==-1){
+            closing=1;
+            }
+            if (eye==100){
+            closing=0;
+            }
+            
+            if (eye<=100 & closing==1){
+            eye+=5;
+            }
+            else if (eye<=100 & closing==0){
+            eye-=5;
+            }
+        }
+        //else//////////////////////////////////////////////////////////////////
+        else{
+            //left,black
+            fill(l);
+            beginShape();
+            noStroke();
+            vertex(0,0);
+            bezierVertex(0,0,0,0,0,800);
+            bezierVertex(0,800,0,800,400,800);
+            bezierVertex(400,800,400,800,400,500);
+            
+            bezierVertex(400,500,300,500,200,400); //200,400 is center
+            bezierVertex(300,300,400,300,400,300);
+            
+            bezierVertex(400,300,400,250,400,0);
+            bezierVertex(400,0,400,0,0,0);
+            endShape();
+            
+            noFill();
+            stroke(255);
+            for (int i=0;i<420;i+=20){
+            strokeWeight(4);
+            bezier(400,500+i,300,500+i,200,400+i,200,400+i);   
+            bezier(200,400-i,300,300-i,400,300-i,400,300-i);
+            }
+            
+            //right,white
+            fill(r);
+            push();
+            translate(800,0);
+            scale(-1,1);
+            beginShape();
+            noStroke();
+            vertex(0,0);
+            bezierVertex(0,0,0,0,0,800);
+            bezierVertex(0,800,0,800,400,800);
+            bezierVertex(400,800,400,800,400,500);
+            
+            bezierVertex(400,500,300,500,200,400); //200,400 is center
+            bezierVertex(300,300,400,300,400,300);
+            
+            bezierVertex(400,300,400,250,400,0);
+            bezierVertex(400,0,400,0,0,0);
+            endShape();
+            
+            noFill();
+            stroke(0);
+            strokeWeight(4);
+            for (int i=0;i<420;i+=20){
+            strokeWeight(4);
+            bezier(400,500+i,300,500+i,200,400+i,200,400+i);   
+            bezier(200,400-i,300,300-i,400,300-i,400,300-i);
+            }
+            pop();    
+        }
+        act_num++;
+        
+        ////last cover
+        //int co=round(random(0,255));
+        //noStroke();
+        //fill(co,10);
+        //rect(0,0,800,800);
+
+}
+    </script>
+    <canvas width="800"height="800"></canvas>
+    </body>
+</body>
+
